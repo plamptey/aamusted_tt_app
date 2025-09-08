@@ -13,7 +13,7 @@ logo_path = "AAMUSTED-LOGO.jpg"
 developer_info = "👨‍💻 Developed by: Patrick Nii Lante Lamptey | 📞 +233-208 426 593"
 
 # Load timetable
-timetable = pd.read_excel(timetable_path)
+timetable_path  = pd.read_excel(timetable_path)
 
 # A small palette to color groups (will cycle)
 GROUP_COLORS = ["#FFF2CC", "#D9EAD3", "#F4CCCC", "#CFE2F3", "#EAD1DC", "#FDEBD0"]
