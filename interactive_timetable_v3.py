@@ -14,24 +14,19 @@ logo_path = "AAMUSTED-LOGO.jpg"
 developer_info = "👨‍💻 Developed by: Patrick Nii Lante Lamptey | 📞 +233-208 426 593"
 
 # Load timetable
-timetable  = pd.read_excel(timetable_path)
+timetable = pd.read_excel(timetable_path)
 
-# A small palette to color groups (will cycle)
+# A small palette to colour groups (will cycle)
 GROUP_COLORS = ["#FFF2CC", "#D9EAD3", "#F4CCCC", "#CFE2F3", "#EAD1DC", "#FDEBD0"]
 
 # ------------------------
-# Helper: compute group coloring
+# Helper: compute group colouring
 # ------------------------
 def compute_group_row_colors(df, key_cols=None):
-    """
-    Given a sorted DataFrame df, compute a mapping index -> color
-    for groups that represent split-venues (group size > 1).
-    key_cols: list of columns to define a group (e.g. ['DAY & DATE','TIME','COURSE CODE'])
-    """
     if key_cols is None:
         key_cols = ['DAY & DATE', 'TIME', 'COURSE CODE']
 
-    key_cols = [c for c in key_cols if c in df.columns]  # keep only valid columns
+    key_cols = [c for c in key_cols if c in df.columns]
     if not key_cols:
         return {}
 
@@ -52,14 +47,12 @@ def compute_group_row_colors(df, key_cols=None):
 # JUPYTER: display with Styler
 # ------------------------
 def display_in_jupyter(df):
-    from IPython.display import display, Image  # import here, only if in Jupyter
-
+    from IPython.display import display, Image
     try:
         display(Image(filename=logo_path, width=180))
     except Exception:
         pass
 
-    # Sort for display
     sort_cols = [c for c in ["DAY & DATE", "TIME"] if c in df.columns]
     df_sorted = df.sort_values(by=sort_cols).reset_index(drop=True)
 
@@ -127,15 +120,13 @@ def render_table_html_for_streamlit(df):
     return html
 
 # ------------------------
-# UI Runners
+# STREAMLIT MODE
 # ------------------------
-def run_jupyter_mode():
-    print("⚠️ Running in Jupyter preview mode (not Streamlit).")
-    display_in_jupyter(timetable)
-
 def run_streamlit_mode():
     import streamlit as st
     from io import BytesIO
+    import smtplib
+    from email.mime.text import MIMEText
 
     st.set_page_config(page_title="University Exam Timetable", layout="wide")
 
@@ -197,6 +188,32 @@ def run_streamlit_mode():
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
+    # ------------------------
+    # 🔔 Subscription & Alerts
+    # ------------------------
+    st.sidebar.header("🔔 Subscribe for Exam Alerts")
+    student_email = st.sidebar.text_input("Enter your email")
+    subscribe = st.sidebar.button("Subscribe")
+
+    if subscribe and student_email:
+        try:
+            email_sender = st.secrets["mail"]["email"]
+            email_pass = st.secrets["mail"]["password"]
+
+            msg = MIMEText("✅ You are now subscribed to AAMUSTED exam alerts. Stay tuned!")
+            msg["Subject"] = "Exam Timetable Subscription"
+            msg["From"] = email_sender
+            msg["To"] = student_email
+
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login(email_sender, email_pass)
+                server.sendmail(email_sender, [student_email], msg.as_string())
+
+            st.sidebar.success("Subscribed! Confirmation email sent.")
+        except Exception as e:
+            st.sidebar.error(f"Failed to send confirmation: {e}")
+
     st.markdown("---")
     st.markdown(f"<div style='text-align:center;color:gray'>{developer_info}</div>", unsafe_allow_html=True)
 
@@ -207,3 +224,4 @@ if "streamlit" in sys.modules:
     run_streamlit_mode()
 else:
     run_jupyter_mode()
+
