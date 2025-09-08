@@ -5,8 +5,11 @@ import sys
 # ------------------------
 # Config / Input paths
 # ------------------------
-timetable_path = "C:/Users/HP/Documents/AAMUSTED/2025/timetable/input_data/exam_timetable_split_rows.xlsx"
-logo_path = "C:/Users/HP/Documents/AAMUSTED/2025/timetable/input_data/AAMUSTED-LOGO.jpg"
+# timetable_path = "C:/Users/HP/Documents/AAMUSTED/2025/timetable/input_data/exam_timetable_split_rows.xlsx"
+# logo_path = "C:/Users/HP/Documents/AAMUSTED/2025/timetable/input_data/AAMUSTED-LOGO.jpg"
+timetable_path = "exam_timetable_split_rows.xlsx"
+logo_path = "AAMUSTED-LOGO.jpg"
+
 developer_info = "👨‍💻 Developed by: Patrick Nii Lante Lamptey | 📞 +233-208 426 593"
 
 # Load timetable
